@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printf_conv_diuxx.c                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: badiakha <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/19 21:40:19 by badiakha          #+#    #+#             */
+/*   Updated: 2025/12/19 21:40:21 by badiakha         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 #include <stdlib.h>
 
@@ -22,7 +34,7 @@ static int	write_number(t_fmt *f, char *prefix, char *num)
 	if (f->width > field)
 		padding = f->width - field;
 	count = 0;
-	if (!f->flag_minus && padding)
+	if (!f->flag_minus && padding && !(f->flag_zero && !f->precision_specified))
 	{
 		if (put_padding(padding, ' ') < 0)
 			return (-1);
@@ -30,6 +42,12 @@ static int	write_number(t_fmt *f, char *prefix, char *num)
 	}
 	if (pre_len && put_str(prefix, pre_len) < 0)
 		return (-1);
+	if (!f->flag_minus && padding && (f->flag_zero && !f->precision_specified))
+	{
+		if (put_padding(padding, '0') < 0)
+			return (-1);
+		count += padding;
+	}
 	if (zeros && put_padding(zeros, '0') < 0)
 		return (-1);
 	if (num_len && put_str(num, num_len) < 0)
@@ -43,6 +61,7 @@ static int	write_number(t_fmt *f, char *prefix, char *num)
 	}
 	return (count);
 }
+
 
 static char	*get_signed_prefix(t_fmt *f, long n, unsigned long *un, char *buf)
 {

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printf.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: badiakha <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/19 21:40:10 by badiakha          #+#    #+#             */
+/*   Updated: 2025/12/19 21:40:11 by badiakha         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 #include <unistd.h>
 
@@ -22,12 +34,35 @@ static int	handle_conv(t_fmt *f, va_list ap)
 	return (0);
 }
 
+static int	handle_format(const char **fmt, va_list ap, int *count)
+{
+	t_fmt	f;
+	int		n;
+
+	if (**fmt == '%')
+	{
+		(*fmt)++;
+		if (parse_format(fmt, &f) == -1)
+			return (-1);
+		n = handle_conv(&f, ap);
+		if (n < 0)
+			return (-1);
+		*count += n;
+	}
+	else
+	{
+		if (write(1, *fmt, 1) < 0)
+			return (-1);
+		(*fmt)++;
+		(*count)++;
+	}
+	return (0);
+}
+
 int	ft_printf(const char *fmt, ...)
 {
 	va_list	ap;
-	t_fmt	f;
 	int		count;
-	int		n;
 
 	if (!fmt)
 		return (-1);
@@ -35,23 +70,8 @@ int	ft_printf(const char *fmt, ...)
 	count = 0;
 	while (*fmt)
 	{
-		if (*fmt == '%')
-		{
-			fmt++;
-			if (parse_format(&fmt, &f) == -1)
-				return (va_end(ap), -1);
-			n = handle_conv(&f, ap);
-			if (n < 0)
-				return (va_end(ap), -1);
-			count += n;
-		}
-		else
-		{
-			if (write(1, fmt, 1) < 0)
-				return (va_end(ap), -1);
-			fmt++;
-			count++;
-		}
+		if (handle_format(&fmt, ap, &count) == -1)
+			return (va_end(ap), -1);
 	}
 	va_end(ap);
 	return (count);
