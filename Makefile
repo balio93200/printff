@@ -7,8 +7,11 @@ SRCS        = $(SRCDIR)/ft_printf.c \
               $(SRCDIR)/ft_printf_parse.c \
               $(SRCDIR)/ft_printf_utils.c \
               $(SRCDIR)/ft_printf_utils2.c \
-              $(SRCDIR)/ft_printf_conv_csp.c \
-              $(SRCDIR)/ft_printf_conv_diuxx.c
+              $(SRCDIR)/ft_printf_conv_cs.c \
+              $(SRCDIR)/ft_printf_conv_ppercent.c \
+			  $(SRCDIR)/ft_printf_number.c \
+			  $(SRCDIR)/ft_printf_conv_di.c \
+			  $(SRCDIR)/ft_printf_conv_ux.c
 
 BSRCS       = $(SRCS)
 
